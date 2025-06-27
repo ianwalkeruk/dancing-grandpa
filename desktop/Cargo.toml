@@ -6,7 +6,7 @@ description = "Desktop version of Dancing Grandpa application"
 license = "MIT"
 
 [dependencies]
-bevy = { version = "0.15", default-features = false, features = [
+bevy = { version = "0.16", default-features = false, features = [
     "bevy_asset",
     "bevy_audio",
     "bevy_core_pipeline",
@@ -24,14 +24,14 @@ bevy = { version = "0.15", default-features = false, features = [
 dancing-grandpa-common = { path = "../common" }
 
 [target.'cfg(target_os = "windows")'.dependencies.bevy]
-version = "0.15"
+version = "0.16"
 default-features = false
 features = [
     "dynamic_linking",
 ]
 
 [target.'cfg(not(target_os = "windows"))'.dependencies.bevy]
-version = "0.15"
+version = "0.16"
 default-features = false
 features = [
     "x11",
