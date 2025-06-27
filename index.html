@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dancing Grandpa - Baby Entertainment System</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            text-align: center;
+            color: white;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        
+        .info {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            max-width: 600px;
+        }
+        
+        .download-section {
+            margin-top: 30px;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #4ecdc4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .download-btn:hover {
+            background: #45b7aa;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 193, 7, 0.2);
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🕺 Dancing Grandpa 🕺</h1>
+        <p>Baby Entertainment System</p>
+        
+        <div class="info">
+            <h3>What is Dancing Grandpa?</h3>
+            <p>Dancing Grandpa is a delightful baby entertainment system built with the Bevy game engine in Rust. It features animated dancing characters synchronized to music, designed to captivate and entertain babies and toddlers.</p>
+            
+            <h3>Features:</h3>
+            <ul style="text-align: left; display: inline-block;">
+                <li>Multiple animated dancing grandpa characters</li>
+                <li>Tempo-synchronized animations</li>
+                <li>Configurable number of dancers and music tempo</li>
+                <li>Automatic restart loop with fade effects</li>
+                <li>Available as both desktop and web applications</li>
+            </ul>
+        </div>
+        
+        <div class="download-section">
+            <h3>Try Dancing Grandpa:</h3>
+            <a href="#" class="download-btn" onclick="alert('Desktop version: Run `cargo run --bin desktop` in the project directory')">
+                🖥️ Desktop Version
+            </a>
+            <a href="website/" class="download-btn">
+                🌐 Web Version
+            </a>
+        </div>
+        
+        <div class="status">
+            <strong>Status:</strong> First version implemented! Both desktop and web versions are ready to use.
+        </div>
+        
+        <div style="margin-top: 30px; font-size: 0.9em; opacity: 0.7;">
+            <p>Built with ❤️ using Rust and Bevy</p>
+        </div>
+    </div>
+</body>
+</html>

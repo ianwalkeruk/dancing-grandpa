@@ -1,0 +1,12 @@
+{
+  "images": [
+    "assets/grandpa1.png",
+    "assets/grandpa2.png", 
+    "assets/grandpa3.png"
+  ],
+  "audio_file": "assets/dance_music.wav",
+  "tempo_bpm": 120,
+  "num_dancers": 5,
+  "fade_duration_secs": 2.0,
+  "silence_duration_secs": 3.0
+}

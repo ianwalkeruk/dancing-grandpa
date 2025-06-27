@@ -1,14 +1,31 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+use bevy::prelude::*;
+use std::time::Duration;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub mod config;
+pub mod systems;
+pub mod components;
+pub mod resources;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+pub use config::*;
+pub use systems::*;
+pub use components::*;
+pub use resources::*;
+
+pub struct DancingGrandpaPlugin;
+
+impl Plugin for DancingGrandpaPlugin {
+    fn build(&self, app: &mut App) {
+        app
+            .add_systems(Startup, setup_system)
+            .add_systems(Update, (
+                animation_system,
+                audio_system,
+                fade_system,
+                restart_system,
+            ))
+            .insert_resource(GameState::Loading)
+            .insert_resource(AnimationTimer(Timer::new(Duration::from_millis(500), TimerMode::Repeating)))
+            .insert_resource(FadeTimer(Timer::new(Duration::from_secs(3), TimerMode::Once)))
+            .insert_resource(RestartTimer(Timer::new(Duration::from_secs(2), TimerMode::Once)));
     }
 }

@@ -1,6 +1,24 @@
 [package]
 name = "desktop"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+bevy = { version = "0.14", default-features = false, features = [
+    "bevy_asset",
+    "bevy_audio",
+    "bevy_core_pipeline",
+    "bevy_render",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+    "bevy_winit",
+    "bevy_color",
+    "png",
+    "vorbis",
+    "wav",
+    "x11",
+    "wayland",
+    "dynamic_linking",
+] }
+common = { path = "../common" }

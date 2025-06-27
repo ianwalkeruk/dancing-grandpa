@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dancing Grandpa - Baby Entertainment System</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+            max-width: 100vw;
+            max-height: 100vh;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            z-index: 1000;
+        }
+        
+        .loading h1 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #333;
+            border-top: 4px solid #4ecdc4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #ff6b6b;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading">
+        <h1>🕺 Dancing Grandpa 🕺</h1>
+        <div class="spinner"></div>
+        <p>Loading baby entertainment system...</p>
+    </div>
+    
+    <script type="module">
+        import init, { run_app } from './pkg/website.js';
+        
+        async function run() {
+            try {
+                // Initialize the WASM module
+                await init();
+                
+                // Hide loading screen
+                document.getElementById('loading').style.display = 'none';
+                
+                // Run the Bevy app
+                run_app();
+            } catch (error) {
+                console.error('Failed to load Dancing Grandpa:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="error">
+                        <h1>🕺 Dancing Grandpa 🕺</h1>
+                        <h3>Failed to Load</h3>
+                        <p>Sorry, there was an error loading the baby entertainment system:</p>
+                        <pre>${error.message}</pre>
+                        <p>Please try refreshing the page or check the browser console for more details.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        run();
+    </script>
+</body>
+</html>
