@@ -19,16 +19,12 @@ bevy = { version = "0.16", default-features = false, features = [
     "png",
     "vorbis",
     "wav",
-    "dynamic_linking",
 ] }
 dancing-grandpa-common = { path = "../common" }
 
 [target.'cfg(target_os = "windows")'.dependencies.bevy]
 version = "0.16"
 default-features = false
-features = [
-    "dynamic_linking",
-]
 
 [target.'cfg(not(target_os = "windows"))'.dependencies.bevy]
 version = "0.16"
