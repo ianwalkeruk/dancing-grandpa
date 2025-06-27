@@ -1,7 +1,9 @@
 [package]
-name = "website"
+name = "dancing-grandpa-website"
 version = "0.1.0"
 edition = "2021"
+description = "Web version of Dancing Grandpa application"
+license = "MIT"
 
 [lib]
 crate-type = ["cdylib"]
@@ -22,7 +24,11 @@ bevy = { version = "0.14", default-features = false, features = [
     "wav",
     "webgl2",
 ] }
-common = { path = "../common" }
+dancing-grandpa-common = { path = "../common" }
 wasm-bindgen = "0.2"
 getrandom = { version = "0.3", features = ["wasm_js"] }
 uuid = { version = "1.0", features = ["js"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-sys = { version = "0.3", features = ["Document", "Window", "Element"] }
+console_error_panic_hook = "0.1.7"

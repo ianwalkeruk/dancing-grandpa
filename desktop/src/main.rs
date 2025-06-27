@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use common::DancingGrandpaPlugin;
+use dancing_grandpa_common::DancingGrandpaPlugin;
 
 fn main() {
     App::new()

@@ -1,7 +1,9 @@
 [package]
-name = "desktop"
+name = "dancing-grandpa-desktop"
 version = "0.1.0"
 edition = "2021"
+description = "Desktop version of Dancing Grandpa application"
+license = "MIT"
 
 [dependencies]
 bevy = { version = "0.14", default-features = false, features = [
@@ -17,8 +19,21 @@ bevy = { version = "0.14", default-features = false, features = [
     "png",
     "vorbis",
     "wav",
-    "x11",
-    "wayland",
     "dynamic_linking",
 ] }
-common = { path = "../common" }
+dancing-grandpa-common = { path = "../common" }
+
+[target.'cfg(target_os = "windows")'.dependencies.bevy]
+version = "0.14"
+default-features = false
+features = [
+    "dynamic_linking",
+]
+
+[target.'cfg(not(target_os = "windows"))'.dependencies.bevy]
+version = "0.14"
+default-features = false
+features = [
+    "x11",
+    "wayland",
+]
