@@ -15,72 +15,60 @@
             min-height: 100vh;
             font-family: Arial, sans-serif;
             overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: #000;
+        }
+        
+        #bevy {
+            width: 100%;
+            height: 100vh;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             color: white;
+            font-size: 2em;
             text-align: center;
+            z-index: 1000;
         }
         
-        .container {
-            max-width: 800px;
-            padding: 40px;
-            background: rgba(50, 50, 50, 0.8);
-            border-radius: 20px;
-        }
-        
-        h1 {
-            color: #ff6b6b;
-            margin-bottom: 20px;
-            font-size: 2.5em;
-        }
-        
-        h2 {
-            color: #4ecdc4;
-            margin: 30px 0 15px;
-        }
-        
-        p {
-            font-size: 1.2em;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        
-        .download-btn {
-            display: inline-block;
-            background: #ff6b6b;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.2em;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .download-btn:hover {
-            background: #ff8c8c;
-            transform: scale(1.05);
-        }
-        
-        .grandpa-icon {
-            font-size: 3em;
-            margin: 20px 0;
+        .loading.hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="loading" class="loading">
         <h1>🕺 Dancing Grandpa 🕺</h1>
-        <div class="grandpa-icon">👴</div>
-        <p>Welcome to the Dancing Grandpa Baby Entertainment System!</p>
-        
-        <h2>Web Version</h2>
-        <p>The web version of Dancing Grandpa is currently not available in this browser.</p>
-        <p>For the best experience, please download and run the desktop version of the application.</p>
-        
-        <h2>Features</h2>
-        <p>Dancing Grandpa is a fun, interactive entertainment system designed to delight babies with animated dancing figures and music.</p>
-        
-        <a href="#" class="download-btn">Download Desktop Version</a>
+        <p>Loading...</p>
     </div>
+    <canvas id="bevy"></canvas>
+    
+    <script type="module">
+        // Wait for trunk to load the WASM module
+        window.addEventListener('TrunkApplicationStarted', async (event) => {
+            try {
+                document.getElementById('loading').classList.add('hidden');
+                // Call the run function from the WASM bindings
+                if (window.wasmBindings && window.wasmBindings.run) {
+                    window.wasmBindings.run();
+                }
+            } catch (error) {
+                console.error('Failed to start application:', error);
+                document.getElementById('loading').innerHTML = `
+                    <h1>🕺 Dancing Grandpa 🕺</h1>
+                    <p>Failed to start the application.</p>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        });
+    </script>
 </body>
 </html>

@@ -32,6 +32,7 @@ pub fn setup_system(
     commands.insert_resource(LoadedImages(images));
     commands.insert_resource(LoadedAudio(audio));
     commands.insert_resource(AudioInstance(None));
+    commands.insert_resource(GameState::Loading);
     
     // Update animation timer based on tempo
     let beat_duration = config.beat_duration();
@@ -60,7 +61,7 @@ pub fn animation_system(
     config: Res<Config>,
     loaded_images: Res<LoadedImages>,
     mut commands: Commands,
-    mut dancers: Query<(Entity, &mut DancingGrandpa, &mut Transform, &mut Sprite)>,
+    mut dancers: Query<(Entity, &mut DancingGrandpa, &mut Transform, &mut Sprite, &ImageHandles)>,
     loaded_audio: Res<LoadedAudio>,
     mut audio_instance: ResMut<AudioInstance>,
 ) {
@@ -184,7 +185,10 @@ fn spawn_dancers(
         };
         
         let mut entity_commands = commands.spawn_empty();
-        entity_commands.insert(Sprite::default());
+        entity_commands.insert(Sprite {
+            image: initial_image.clone(),
+            ..default()
+        });
         entity_commands.insert(Transform::from_translation(base_position));
         entity_commands.insert(GlobalTransform::default());
         entity_commands.insert(Visibility::default());
@@ -197,16 +201,16 @@ fn spawn_dancers(
             frame_timer: 0.0,
         });
         entity_commands.insert(ImageHandles {
-            handles: vec![initial_image],
+            handles: images.to_vec(),
         });
     }
 }
 
 fn update_dancer_animations(
-    dancers: &mut Query<(Entity, &mut DancingGrandpa, &mut Transform, &mut Sprite)>,
+    dancers: &mut Query<(Entity, &mut DancingGrandpa, &mut Transform, &mut Sprite, &ImageHandles)>,
     config: &DancingGrandpaConfig,
 ) {
-    for (_, mut dancer, mut transform, mut sprite) in dancers.iter_mut() {
+    for (_, mut dancer, mut transform, mut sprite, image_handles) in dancers.iter_mut() {
         if config.animation_frames.is_empty() {
             continue;
         }
@@ -214,6 +218,11 @@ fn update_dancer_animations(
         // Move to next frame
         dancer.current_frame = (dancer.current_frame + 1) % config.animation_frames.len();
         let frame = &config.animation_frames[dancer.current_frame];
+        
+        // Update sprite image if we have the right image
+        if frame.image_index < image_handles.handles.len() {
+            sprite.image = image_handles.handles[frame.image_index].clone();
+        }
         
         // Apply animation transformations
         transform.translation = dancer.base_position + Vec3::new(frame.offset_x, frame.offset_y, 0.0);
