@@ -24,6 +24,8 @@ pub struct Config(pub DancingGrandpaConfig);
 #[derive(Resource)]
 pub struct LoadedImages(pub Vec<Handle<Image>>);
 
+
+
 #[derive(Resource)]
 pub struct LoadedAudio(pub Handle<AudioSource>);
 

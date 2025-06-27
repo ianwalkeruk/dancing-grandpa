@@ -1,0 +1,46 @@
+{
+  "images": [
+    "grandpa1.png",
+    "grandpa2.png",
+    "grandpa3.png"
+  ],
+  "audio_file": "dance_music.wav",
+  "tempo_bpm": 120.0,
+  "animation_frames": [
+    {
+      "image_index": 0,
+      "duration_beats": 0.5,
+      "scale": 1.0,
+      "rotation_degrees": 0.0,
+      "offset_x": 0.0,
+      "offset_y": 0.0
+    },
+    {
+      "image_index": 1,
+      "duration_beats": 0.5,
+      "scale": 1.1,
+      "rotation_degrees": 10.0,
+      "offset_x": 5.0,
+      "offset_y": -5.0
+    },
+    {
+      "image_index": 2,
+      "duration_beats": 0.5,
+      "scale": 0.9,
+      "rotation_degrees": -10.0,
+      "offset_x": -5.0,
+      "offset_y": 5.0
+    },
+    {
+      "image_index": 1,
+      "duration_beats": 0.5,
+      "scale": 1.1,
+      "rotation_degrees": -10.0,
+      "offset_x": -5.0,
+      "offset_y": -5.0
+    }
+  ],
+  "num_dancers": 5,
+  "fade_duration_secs": 3.0,
+  "silence_duration_secs": 2.0
+}

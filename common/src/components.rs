@@ -15,4 +15,6 @@ pub struct FadingOut {
 }
 
 #[derive(Component)]
-pub struct AudioSource;
+pub struct ImageHandles {
+    pub handles: Vec<Handle<Image>>,
+}

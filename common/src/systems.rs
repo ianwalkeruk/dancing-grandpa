@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::audio::{PlaybackSettings, AudioPlayer};
 use rand::Rng;
 use std::f32::consts::PI;
 
@@ -24,7 +25,7 @@ pub fn setup_system(
     let audio = asset_server.load(&config.audio_file);
     
     // Setup camera
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
     
     // Store resources
     commands.insert_resource(Config(config.clone()));
@@ -70,10 +71,10 @@ pub fn animation_system(
                 spawn_dancers(&mut commands, &config.0, &loaded_images.0);
                 
                 // Start audio
-                let audio_entity = commands.spawn(AudioBundle {
-                    source: loaded_audio.0.clone(),
-                    settings: PlaybackSettings::ONCE,
-                }).id();
+                let audio_entity = commands.spawn((
+                    AudioPlayer::new(loaded_audio.0.clone()),
+                    PlaybackSettings::ONCE,
+                )).id();
                 audio_instance.0 = Some(audio_entity);
                 
                 *game_state = GameState::Playing;
@@ -151,10 +152,10 @@ pub fn restart_system(
             spawn_dancers(&mut commands, &config.0, &loaded_images.0);
             
             // Start audio again
-            let audio_entity = commands.spawn(AudioBundle {
-                source: loaded_audio.0.clone(),
-                settings: PlaybackSettings::ONCE,
-            }).id();
+            let audio_entity = commands.spawn((
+                AudioPlayer::new(loaded_audio.0.clone()),
+                PlaybackSettings::ONCE,
+            )).id();
             audio_instance.0 = Some(audio_entity);
             
             *game_state = GameState::Playing;
@@ -182,19 +183,22 @@ fn spawn_dancers(
             continue;
         };
         
-        commands.spawn((
-            SpriteBundle {
-                texture: initial_image,
-                transform: Transform::from_translation(base_position),
-                ..default()
-            },
-            DancingGrandpa {
-                dancer_id: i,
-                base_position,
-                current_frame: 0,
-                frame_timer: 0.0,
-            },
-        ));
+        let mut entity_commands = commands.spawn_empty();
+        entity_commands.insert(Sprite::default());
+        entity_commands.insert(Transform::from_translation(base_position));
+        entity_commands.insert(GlobalTransform::default());
+        entity_commands.insert(Visibility::default());
+        entity_commands.insert(InheritedVisibility::default());
+        entity_commands.insert(ViewVisibility::default());
+        entity_commands.insert(DancingGrandpa {
+            dancer_id: i,
+            base_position,
+            current_frame: 0,
+            frame_timer: 0.0,
+        });
+        entity_commands.insert(ImageHandles {
+            handles: vec![initial_image],
+        });
     }
 }
 
