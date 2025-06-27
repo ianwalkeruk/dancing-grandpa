@@ -10,3 +10,4 @@ The system loads a set of image files and an audio file, according to a config f
 The config file also contains a description of how the images should be animated and the tempo of the audio file.
 The system shows a number of copies of the animated image, and plays the audio file, using the provided tempo to time the animation.
 When the audio file has completed, the system plays silence for a few seconds while fading out the images, and then restarts the sequence.
+The desktop package is designed to run on Windows, and so I should not attempt to build it as it will always fail.
