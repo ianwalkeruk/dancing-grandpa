@@ -2,7 +2,7 @@
 
 The `dancing-grandpa` repository contains the code for a "baby entertainment system" called "Dancing Grandpa".
 The system is written in idiomatic Rust and based on the Bevy engine.
-The repository root is a Cargo workspace containing three packages.
+There are three packages in the repository, but we don't use a workspace because we need different targets for each package.
 The `website` binary package contains the code to run the system as a single-page web app.
 The `desktop` binary package contains the code to run the system as a desktop application.
 The `common` library package contains code that is shared between both applications
