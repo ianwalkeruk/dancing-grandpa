@@ -2,6 +2,11 @@
 target = "index.html"
 dist = "dist"
 
+[[hooks]]
+stage = "pre_build"
+command = "cp"
+command_arguments = ["-r", "assets", "dist/"]
+
 [serve]
 address = "0.0.0.0"
 port = 12000

@@ -25,11 +25,11 @@ impl Default for DancingGrandpaConfig {
     fn default() -> Self {
         Self {
             images: vec![
-                "grandpa1.png".to_string(),
-                "grandpa2.png".to_string(),
-                "grandpa3.png".to_string(),
+                "assets/grandpa1.png".to_string(),
+                "assets/grandpa2.png".to_string(),
+                "assets/grandpa3.png".to_string(),
             ],
-            audio_file: "dance_music.wav".to_string(),
+            audio_file: "assets/dance_music.wav".to_string(),
             tempo_bpm: 120.0,
             animation_frames: vec![
                 AnimationFrame {

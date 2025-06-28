@@ -1,7 +1,11 @@
 use bevy::prelude::*;
 use bevy::audio::{PlaybackSettings, AudioPlayer};
+use bevy::asset::LoadState;
 use rand::Rng;
 use std::f32::consts::PI;
+
+#[cfg(target_arch = "wasm32")]
+use web_sys::console;
 
 use crate::{
     components::*,
@@ -13,45 +17,101 @@ pub fn setup_system(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
-    // Load default config
+    #[cfg(target_arch = "wasm32")]
+    console::log_1(&"Setup system starting".into());
+    
+    // Use default config
     let config = DancingGrandpaConfig::default();
-    
-    // Load images
-    let images: Vec<Handle<Image>> = config.images.iter()
-        .map(|path| asset_server.load(path))
-        .collect();
-    
-    // Load audio
-    let audio = asset_server.load(&config.audio_file);
     
     // Setup camera
     commands.spawn(Camera2d);
     
-    // Store resources
-    commands.insert_resource(Config(config.clone()));
-    commands.insert_resource(LoadedImages(images));
-    commands.insert_resource(LoadedAudio(audio));
-    commands.insert_resource(AudioInstance(None));
-    commands.insert_resource(GameState::Loading);
+    #[cfg(target_arch = "wasm32")]
+    console::log_1(&"Camera spawned".into());
     
-    // Update animation timer based on tempo
-    let beat_duration = config.beat_duration();
+    // Load grandpa images
+    let grandpa_images: Vec<Handle<Image>> = config.images.iter()
+        .map(|path| asset_server.load(path))
+        .collect();
+    
+    // Fallback colors while images load
+    let colors = [
+        Color::srgb(1.0, 0.0, 0.0), // Red
+        Color::srgb(0.0, 1.0, 0.0), // Green
+        Color::srgb(0.0, 0.0, 1.0), // Blue
+        Color::srgb(1.0, 1.0, 0.0), // Yellow
+        Color::srgb(1.0, 0.0, 1.0), // Magenta
+    ];
+    
+    #[cfg(target_arch = "wasm32")]
+    console::log_1(&format!("Spawning {} dancing grandpas", config.num_dancers).into());
+    
+    for i in 0..config.num_dancers {
+        let x = (i as f32 - 2.0) * 120.0; // Spread them out horizontally
+        let y = 0.0;
+        let base_position = Vec3::new(x, y, 0.0);
+        
+        // Use colored rectangles for now (images will be added later when they load)
+        let color = colors[i % colors.len()];
+        
+        commands.spawn((
+            Sprite {
+                color,
+                custom_size: Some(Vec2::new(100.0, 100.0)),
+                ..default()
+            },
+            Transform::from_translation(base_position),
+            DancingGrandpa {
+                dancer_id: i,
+                base_position,
+                current_frame: 0,
+                frame_timer: 0.0,
+            },
+        ));
+    }
+    
+    // Load and play audio
+    let audio_handle = asset_server.load(&config.audio_file);
+    
+    #[cfg(target_arch = "wasm32")]
+    console::log_1(&"Loading audio file".into());
+    
+    // Start playing audio immediately
+    commands.spawn((
+        AudioPlayer::new(audio_handle.clone()),
+        PlaybackSettings::LOOP,
+    ));
+    
+    // Store minimal resources for animation
+    commands.insert_resource(Config(config.clone()));
     commands.insert_resource(AnimationTimer(Timer::from_seconds(
-        beat_duration * 0.5, // Half beat for smoother animation
+        config.beat_duration() * 0.5,
         TimerMode::Repeating
     )));
     
-    // Update fade timer
-    commands.insert_resource(FadeTimer(Timer::from_seconds(
-        config.fade_duration_secs,
-        TimerMode::Once
-    )));
+    #[cfg(target_arch = "wasm32")]
+    console::log_1(&"Setup system completed".into());
+}
+
+pub fn simple_animation_system(
+    time: Res<Time>,
+    mut animation_timer: ResMut<AnimationTimer>,
+    mut dancers: Query<(&mut Transform, &DancingGrandpa)>,
+) {
+    // Tick the animation timer
+    animation_timer.0.tick(time.delta());
     
-    // Update restart timer
-    commands.insert_resource(RestartTimer(Timer::from_seconds(
-        config.silence_duration_secs,
-        TimerMode::Once
-    )));
+    if animation_timer.0.just_finished() {
+        #[cfg(target_arch = "wasm32")]
+        console::log_1(&"Animation tick".into());
+        
+        // Simple bouncing animation
+        for (mut transform, dancer) in dancers.iter_mut() {
+            let bounce_height = 30.0;
+            let time_factor = (time.elapsed_secs() + dancer.dancer_id as f32).sin();
+            transform.translation.y = dancer.base_position.y + bounce_height * time_factor;
+        }
+    }
 }
 
 pub fn animation_system(
@@ -64,22 +124,26 @@ pub fn animation_system(
     mut dancers: Query<(Entity, &mut DancingGrandpa, &mut Transform, &mut Sprite, &ImageHandles)>,
     loaded_audio: Res<LoadedAudio>,
     mut audio_instance: ResMut<AudioInstance>,
+    asset_server: Res<AssetServer>,
 ) {
     match *game_state {
         GameState::Loading => {
-            // Check if assets are loaded
-            if !loaded_images.0.is_empty() {
-                spawn_dancers(&mut commands, &config.0, &loaded_images.0);
-                
-                // Start audio
-                let audio_entity = commands.spawn((
-                    AudioPlayer::new(loaded_audio.0.clone()),
-                    PlaybackSettings::ONCE,
-                )).id();
-                audio_instance.0 = Some(audio_entity);
-                
-                *game_state = GameState::Playing;
-            }
+            #[cfg(target_arch = "wasm32")]
+            console::log_1(&"In Loading state, spawning dancers immediately for testing...".into());
+            
+            // For testing, spawn dancers immediately without waiting for assets
+            spawn_dancers(&mut commands, &config.0, &loaded_images.0);
+            
+            // Don't start audio for now, just focus on visual
+            // let audio_entity = commands.spawn((
+            //     AudioPlayer::new(loaded_audio.0.clone()),
+            //     PlaybackSettings::ONCE,
+            // )).id();
+            // audio_instance.0 = Some(audio_entity);
+            
+            *game_state = GameState::Playing;
+            #[cfg(target_arch = "wasm32")]
+            console::log_1(&"Game state changed to Playing".into());
         }
         GameState::Playing => {
             if animation_timer.0.tick(time.delta()).just_finished() {
@@ -169,6 +233,9 @@ fn spawn_dancers(
     config: &DancingGrandpaConfig,
     images: &[Handle<Image>],
 ) {
+    #[cfg(target_arch = "wasm32")]
+    console::log_1(&format!("spawn_dancers called with {} dancers, {} images", config.num_dancers, images.len()).into());
+    
     let mut rng = rand::thread_rng();
     let window_width = 800.0; // Assume window dimensions
     let window_height = 600.0;
@@ -178,15 +245,14 @@ fn spawn_dancers(
         let y = rng.gen_range(-window_height/2.0..window_height/2.0);
         let base_position = Vec3::new(x, y, 0.0);
         
-        let initial_image = if !images.is_empty() {
-            images[0].clone()
-        } else {
-            continue;
-        };
+        #[cfg(target_arch = "wasm32")]
+        console::log_1(&format!("Spawning dancer {} at position ({}, {})", i, x, y).into());
         
+        // For now, spawn colored rectangles instead of images to test rendering
         let mut entity_commands = commands.spawn_empty();
         entity_commands.insert(Sprite {
-            image: initial_image.clone(),
+            color: Color::srgb(0.0, 1.0, 0.0), // Green color
+            custom_size: Some(Vec2::new(50.0, 50.0)),
             ..default()
         });
         entity_commands.insert(Transform::from_translation(base_position));
